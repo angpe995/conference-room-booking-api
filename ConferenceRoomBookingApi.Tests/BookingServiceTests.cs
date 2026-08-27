@@ -14,9 +14,9 @@ public class BookingServiceTests
         {
             Id = 1,
             Name = "Room A",
-            Capacity = 50,
-            PricePerHour = 2000
+            Capacity = 50
         };
+        _room.UpdatePrice(2000);
         _services = new List<Service>();
         _services.Add(new Service("projector", 500));
 
@@ -180,8 +180,8 @@ public class BookingServiceTests
             Id = 2,
             Name = "Room B",
             Capacity = 100,
-            PricePerHour = 3500
         };
+            anotherRoom.UpdatePrice(3500);
         _bookingService.CreateBooking(
             anotherRoom,
             new DateTime(2026, 9, 1, 10, 0, 0),
