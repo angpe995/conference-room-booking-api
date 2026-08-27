@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\development\\conference-room-booking-api\\conference-room-booking-api.csproj": {}
+    "C:\\development\\conference-room-booking-api\\ConferenceRoomBookingApi\\conference-room-booking-api.csproj": {}
   },
   "projects": {
-    "C:\\development\\conference-room-booking-api\\conference-room-booking-api.csproj": {
+    "C:\\development\\conference-room-booking-api\\ConferenceRoomBookingApi\\conference-room-booking-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\development\\conference-room-booking-api\\conference-room-booking-api.csproj",
+        "projectUniqueName": "C:\\development\\conference-room-booking-api\\ConferenceRoomBookingApi\\conference-room-booking-api.csproj",
         "projectName": "conference-room-booking-api",
-        "projectPath": "C:\\development\\conference-room-booking-api\\conference-room-booking-api.csproj",
+        "projectPath": "C:\\development\\conference-room-booking-api\\ConferenceRoomBookingApi\\conference-room-booking-api.csproj",
         "packagesPath": "C:\\Users\\angpe\\.nuget\\packages\\",
-        "outputPath": "C:\\development\\conference-room-booking-api\\obj\\",
+        "outputPath": "C:\\development\\conference-room-booking-api\\ConferenceRoomBookingApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\angpe\\AppData\\Roaming\\NuGet\\NuGet.Config"
