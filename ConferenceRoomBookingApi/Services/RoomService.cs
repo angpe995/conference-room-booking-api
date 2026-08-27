@@ -21,7 +21,7 @@ public class RoomService
     public Room CreateRoom(
         string name,
         decimal pricePerHour,
-        int capacity, List<Service> services)
+        int capacity, List<Service>? services)
     {
         if (pricePerHour <= MinPrice)
         {
@@ -36,7 +36,7 @@ public class RoomService
             Id = NextRoomId(),
             Name = name,
             Capacity = capacity,
-            Services = new List<Service>(services)
+            Services = new List<Service>(services ?? new List<Service>())
         };
         room.UpdatePrice(pricePerHour);
         _rooms.Add(room);
