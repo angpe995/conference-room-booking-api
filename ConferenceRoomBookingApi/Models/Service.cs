@@ -5,6 +5,12 @@ public class Service
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public decimal Price { get; private set; }
+    public Service(string name, decimal price)
+    {
+        Id = 0; //temporary
+        Name = name;
+        Price = price;
+    }
     public void UpdatePrice(decimal newPrice)
     {
         if (newPrice <= 0)
