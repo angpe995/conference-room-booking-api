@@ -128,4 +128,14 @@ public class RoomService
         if (newService is not null) room.Services.Add(newService);
         return room;
     }
+    // Deletes a room by its ID.
+    public void DeleteRoom(int roomId)
+    {
+        var room = _rooms.FirstOrDefault(r => r.Id == roomId);
+        if (room is null)
+        {
+            throw new ArgumentException("Room was not found.");
+        }
+        _rooms.Remove(room);
+    }
 }
