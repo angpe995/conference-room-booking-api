@@ -1,8 +1,12 @@
+using ConferenceRoomBookingApi.Data;
+using ConferenceRoomBookingApi.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddSingleton<DataStore>();
+builder.Services.AddSingleton<RoomService>();
+builder.Services.AddSingleton<BookingService>();
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {

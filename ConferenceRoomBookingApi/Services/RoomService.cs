@@ -1,4 +1,6 @@
 using ConferenceRoomBookingApi.Models;
+using ConferenceRoomBookingApi.Data;
+
 namespace ConferenceRoomBookingApi.Services;
 
 public class RoomService
@@ -7,7 +9,6 @@ public class RoomService
     private const decimal MinPrice = 0m;
     // Minimum allowed room capacity
     private const int MinCapacity = 0;
-    private readonly List<Room> _rooms = new();
     private int _nextRoomId = 1;
     // Generates a unique ID for a new room.
     private int NextRoomId()
@@ -19,6 +20,11 @@ public class RoomService
     private int NextServiceId()
     {
         return _nextServiceId++;
+    }
+    private readonly DataStore _dataStore;
+    public RoomService(DataStore DataStore)
+    {
+        _dataStore=DataStore;
     }
     // Creates a new room and adds it to the room list
     public Room CreateRoom(
@@ -42,7 +48,7 @@ public class RoomService
             Services = new List<Service>(services ?? new List<Service>())
         };
         room.UpdatePrice(pricePerHour);
-        _rooms.Add(room);
+        _dataStore.Rooms.Add(room);
         return room;
     }
     // Creates a new service and adds it to the specified room.
@@ -56,7 +62,7 @@ public class RoomService
             throw new ArgumentException("Service price must be greater than zero");
         }
         // finds the room by id
-        var room = _rooms.FirstOrDefault(r => r.Id == roomId);
+        var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
         if (room is null)
         {
             throw new ArgumentException("Room was not found.");
@@ -82,7 +88,7 @@ public class RoomService
             throw new ArgumentException("Service price must be greater than zero");
         }
         // finds the room by id
-        var room = _rooms.FirstOrDefault(r => r.Id == roomId);
+        var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
         if (room is null)
         {
             throw new ArgumentException("Room was not found.");
@@ -109,7 +115,7 @@ public class RoomService
             throw new ArgumentException("either newPrice or newService must not equal null");
         }
         // finds the room by id
-        var room = _rooms.FirstOrDefault(r => r.Id == roomId);
+        var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
         if (room == null)
         {
             throw new ArgumentException("Room was not found.");
@@ -131,11 +137,11 @@ public class RoomService
     // Deletes a room by its ID.
     public void DeleteRoom(int roomId)
     {
-        var room = _rooms.FirstOrDefault(r => r.Id == roomId);
+        var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
         if (room is null)
         {
             throw new ArgumentException("Room was not found.");
         }
-        _rooms.Remove(room);
+        _dataStore.Rooms.Remove(room);
     }
 }
