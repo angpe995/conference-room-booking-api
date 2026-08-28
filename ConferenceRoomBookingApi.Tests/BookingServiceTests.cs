@@ -48,7 +48,7 @@ public class BookingServiceTests
             _room,
             existingStart,
             existingEnd,
-            4000);
+            new List<int>());
         // Act
         bool result = _bookingService.CheckAvailability(
             1,
@@ -65,7 +65,7 @@ public class BookingServiceTests
             _room,
             new DateTime(2026, 9, 1, 10, 0, 0),
             new DateTime(2026, 9, 1, 12, 0, 0),
-            4000);
+            new List<int>());
         // Act
         bool result = _bookingService.CheckAvailability(
             1,
@@ -145,7 +145,7 @@ public class BookingServiceTests
             _room,
             startTime,
             endTime,
-            4000);
+            new List<int>());
         // Assert
         Assert.Equal(1, booking.Id);
         Assert.Equal(1, booking.RoomId);
@@ -164,14 +164,14 @@ public class BookingServiceTests
             _room,
             startTime,
             endTime,
-            4000);
+            new List<int>());
         Assert.Throws<ConflictException>(() =>
         {
             _bookingService.CreateBooking(
                 _room,
                 startTime,
                 endTime,
-                4000);
+                new List<int>());
         });
     }
     [Fact]
@@ -189,7 +189,7 @@ public class BookingServiceTests
             anotherRoom,
             new DateTime(2026, 9, 1, 10, 0, 0),
             new DateTime(2026, 9, 1, 12, 0, 0),
-            7000);
+            new List<int>());
         // Act
         bool result = _bookingService.CheckAvailability(
             _room.Id,
@@ -206,12 +206,12 @@ public class BookingServiceTests
             _room,
             new DateTime(2026, 9, 1, 10, 0, 0),
             new DateTime(2026, 9, 1, 12, 0, 0),
-            4000);
+            new List<int>());
         var secondBooking = _bookingService.CreateBooking(
             _room,
             new DateTime(2026, 9, 1, 12, 0, 0),
             new DateTime(2026, 9, 1, 14, 0, 0),
-            4000);
+            new List<int>());
         Assert.NotEqual(firstBooking.Id, secondBooking.Id);
     }
 
