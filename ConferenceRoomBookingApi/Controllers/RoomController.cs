@@ -4,6 +4,8 @@ using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.DTOs;
 namespace ConferenceRoomBookingApi.Controllers;
 
+[ApiController]
+[Route("api/[controller]")]
 public class RoomsController : ControllerBase
 {
     private readonly RoomService _roomService;
@@ -15,18 +17,13 @@ public class RoomsController : ControllerBase
     // Creates a new room with its available services.
     [HttpPost]
     public ActionResult<Room> CreateRoom(
-       [FromBody] CreateRoomRequest request)
+    [FromBody] CreateRoomRequest request)
     {
-        var services = request.Services
-        .Select(serviceRequest => new Service(
-            serviceRequest.Name,
-            serviceRequest.Price))
-        .ToList();
         var room = _roomService.CreateRoom(
-        request.Name,
-        request.PricePerHour,
-        request.Capacity,
-        services);
+            request.Name,
+            request.PricePerHour,
+            request.Capacity,
+            request.Services);
         return Ok(room);
     }
     // Deletes a room by its ID.
@@ -42,17 +39,11 @@ public class RoomsController : ControllerBase
     int id,
     [FromBody] UpdateRoomRequest request)
     {
-        Service? newService = null;
-        if (request.ServiceToAdd is not null)
-        {
-            newService = new Service(
-                request.ServiceToAdd.Name,
-                request.ServiceToAdd.Price);
-        }
         var room = _roomService.UpdateRoom(
             id,
             request.PricePerHour,
-            newService);
+            request.ServiceToAdd);
+
         return Ok(room);
     }
 }

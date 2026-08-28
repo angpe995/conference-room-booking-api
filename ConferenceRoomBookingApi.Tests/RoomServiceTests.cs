@@ -1,7 +1,7 @@
 ﻿using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Services;
 using ConferenceRoomBookingApi.Data;
-
+using ConferenceRoomBookingApi.DTOs;
 
 namespace ConferenceRoomBookingApi.Tests;
 
@@ -173,9 +173,7 @@ public class RoomServiceTests
             RoomPricePerHour,
             RoomCapacity,
             null);
-        Service service = new Service(
-            ServiceName,
-            ServicePricePerHour);
+        ServiceRequest service = new ServiceRequest{Name=ServiceName,Price=RoomPricePerHour};
         // Act
         Room updatedRoom = _roomService.UpdateRoom(
             room.Id,
@@ -219,7 +217,7 @@ public class RoomServiceTests
             RoomName,
             RoomPricePerHour,
             RoomCapacity,
-            new List<Service>());
+            new List<ServiceRequest>());
         // Act
         _roomService.DeleteRoom(room.Id);
         // Assert
@@ -234,12 +232,12 @@ public class RoomServiceTests
             RoomName,
             RoomPricePerHour,
             RoomCapacity,
-            new List<Service>());
+            new List<ServiceRequest>());
         var secondRoom = _roomService.CreateRoom(
             "Room B",
             3000m,
             100,
-            new List<Service>());
+            new List<ServiceRequest>());
         // Assert
         Assert.NotEqual(firstRoom.Id, secondRoom.Id);
     }
