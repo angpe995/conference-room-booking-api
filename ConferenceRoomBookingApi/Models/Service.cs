@@ -7,7 +7,6 @@ public class Service
     public decimal Price { get; private set; }
     public Service(string name, decimal price)
     {
-        Id = 0; //temporary
         Name = name;
         Price = price;
     }
