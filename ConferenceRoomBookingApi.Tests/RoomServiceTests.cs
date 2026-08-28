@@ -1,5 +1,7 @@
 ﻿using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Services;
+using ConferenceRoomBookingApi.Data;
+
 
 namespace ConferenceRoomBookingApi.Tests;
 
@@ -10,10 +12,12 @@ public class RoomServiceTests
     private const int RoomCapacity = 50;
     private const decimal RoomPricePerHour = 2000m;
     private const string ServiceName = "Projector";
-    private const decimal ServicePricePerHour = 2000m;
+    private const decimal ServicePricePerHour = 500m;
+    private readonly DataStore _dataStore;
     public RoomServiceTests()
     {
-        _roomService = new RoomService();
+        _dataStore = new DataStore();
+        _roomService = new RoomService(_dataStore);
     }
     [Fact]
     public void CreateRoom_ReturnsRoom_WhenPriceAndCapacityAreGreaterThanZero()

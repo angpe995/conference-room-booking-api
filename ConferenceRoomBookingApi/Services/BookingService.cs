@@ -1,4 +1,5 @@
 using ConferenceRoomBookingApi.Models;
+using ConferenceRoomBookingApi.Data;
 namespace ConferenceRoomBookingApi.Services;
 
 public class BookingService
@@ -18,7 +19,12 @@ public class BookingService
     private const decimal PeakMarkup = 1.15m;
     private const decimal EveningDiscount = 0.80m;
     private const decimal StandardMultiplier = 1.00m;
-    private readonly List<Booking> _bookings = new();
+
+    private readonly DataStore _dataStore;
+    public BookingService(DataStore dataStore)
+    {
+        _dataStore = dataStore;
+    }
     // Allowed booking hours.
     private const int BookingStartHour = 6;
     private const int BookingEndHour = 23;
@@ -60,14 +66,14 @@ public class BookingService
             TotalPrice = totalPrice
         };
 
-        _bookings.Add(booking);
+        _dataStore.Bookings.Add(booking);
         return booking;
     }
     // Checks whether the room has no conflicting bookings.
     public bool CheckAvailability(int roomId, DateTime StartTime,
      DateTime EndTime)
     {
-        return !_bookings.Any(booking =>
+        return !_dataStore.Bookings.Any(booking =>
             booking.RoomId == roomId &&
             booking.StartTime < EndTime &&
             StartTime < booking.EndTime);
