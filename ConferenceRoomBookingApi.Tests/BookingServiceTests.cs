@@ -1,15 +1,17 @@
 ﻿using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Services;
+using ConferenceRoomBookingApi.Data;
 namespace ConferenceRoomBookingApi.Tests;
 
 public class BookingServiceTests
 {
     private readonly BookingService _bookingService;
+    private readonly DataStore _dataStore= new();
     private readonly Room _room;
     private readonly List<Service> _services;
     public BookingServiceTests()
     {
-        _bookingService = new BookingService();
+        _bookingService = new BookingService(_dataStore);
         _room = new Room
         {
             Id = 1,
