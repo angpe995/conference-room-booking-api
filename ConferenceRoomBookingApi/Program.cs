@@ -1,7 +1,6 @@
 using ConferenceRoomBookingApi.Data;
-using ConferenceRoomBookingApi.Models;
-using ConferenceRoomBookingApi.DTOs;
 using ConferenceRoomBookingApi.Services;
+using ConferenceRoomBookingApi.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -10,7 +9,10 @@ builder.Services.AddSingleton<DataStore>();
 builder.Services.AddSingleton<RoomService>();
 builder.Services.AddSingleton<BookingService>();
 builder.Services.AddSingleton<RoomSearchService>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 var app = builder.Build();
+app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -18,9 +20,4 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.MapControllers();
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild",
-    "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 app.Run();

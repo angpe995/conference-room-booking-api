@@ -74,7 +74,7 @@ public class RoomSearchServiceTests
             room,
             new DateTime(2026, 9, 1, 10, 0, 0),
             new DateTime(2026, 9, 1, 12, 0, 0),
-            4000m);
+            new List<int>());
         // Act
         var result = _roomSearchService.SearchAvailableRooms(
             new DateTime(2026, 9, 1, 11, 0, 0),
@@ -97,7 +97,7 @@ public class RoomSearchServiceTests
             room,
             new DateTime(2026, 9, 1, 10, 0, 0),
             new DateTime(2026, 9, 1, 12, 0, 0),
-            4000m);
+            new List<int>());
         // Act
         var result = _roomSearchService.SearchAvailableRooms(
             new DateTime(2026, 9, 1, 12, 0, 0),
