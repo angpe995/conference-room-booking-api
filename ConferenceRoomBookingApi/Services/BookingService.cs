@@ -1,5 +1,6 @@
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Data;
+using ConferenceRoomBookingApi.Exceptions;
 namespace ConferenceRoomBookingApi.Services;
 
 public class BookingService
@@ -55,7 +56,7 @@ public class BookingService
         //throws error when the room is alredy booked for the requested time 
         if (!CheckAvailability(room.Id, startTime, endTime))
         {
-            throw new InvalidOperationException("Room is already booked.");
+            throw new ConflictException("Room is already booked.");
         }
         var booking = new Booking
         {

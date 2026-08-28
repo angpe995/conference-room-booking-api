@@ -2,6 +2,7 @@
 using ConferenceRoomBookingApi.Services;
 using ConferenceRoomBookingApi.Data;
 using ConferenceRoomBookingApi.DTOs;
+using ConferenceRoomBookingApi.Exceptions;
 
 namespace ConferenceRoomBookingApi.Tests;
 
@@ -52,7 +53,6 @@ public class RoomServiceTests
     public void CreateRoom_Throws_WhenCapacityIsLessOrEqualToZero()
     {
         // Arrange
-
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
             _roomService.CreateRoom(
@@ -206,7 +206,7 @@ public class RoomServiceTests
         // Arrange
         const int missingRoomId = 999;
         // Act & Assert
-        Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<NotFoundException>(() =>
             _roomService.DeleteRoom(missingRoomId));
     }
     [Fact]
@@ -221,7 +221,7 @@ public class RoomServiceTests
         // Act
         _roomService.DeleteRoom(room.Id);
         // Assert
-        Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<NotFoundException>(() =>
             _roomService.UpdateRoom(room.Id, 2500, null));
     }
     [Fact]
