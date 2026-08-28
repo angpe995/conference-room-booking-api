@@ -226,4 +226,21 @@ public class RoomServiceTests
         Assert.Throws<ArgumentException>(() =>
             _roomService.UpdateRoom(room.Id, 2500, null));
     }
+    [Fact]
+    public void CreateRoom_GeneratesUniqueIds()
+    {
+        // Arrange
+        var firstRoom = _roomService.CreateRoom(
+            RoomName,
+            RoomPricePerHour,
+            RoomCapacity,
+            new List<Service>());
+        var secondRoom = _roomService.CreateRoom(
+            "Room B",
+            3000m,
+            100,
+            new List<Service>());
+        // Assert
+        Assert.NotEqual(firstRoom.Id, secondRoom.Id);
+    }
 }
