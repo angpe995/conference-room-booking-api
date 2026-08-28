@@ -1,4 +1,5 @@
 using ConferenceRoomBookingApi.Data;
+using ConferenceRoomBookingApi.DTOs;
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Services;
 
@@ -27,12 +28,12 @@ public class RoomSearchServiceTests
             "Room A",
             2000m,
             50,
-            new List<Service>());
+            new List<ServiceRequest>());
         var roomB = _roomService.CreateRoom(
             "Room B",
             3500m,
             100,
-            new List<Service>());
+            new List<ServiceRequest>());
         // Act
         var result = _roomSearchService.SearchAvailableRooms(
             new DateTime(2026, 9, 1, 10, 0, 0),
@@ -50,7 +51,7 @@ public class RoomSearchServiceTests
             "Room A",
             2000m,
             30,
-            new List<Service>());
+            new List<ServiceRequest>());
         // Act
         var result = _roomSearchService.SearchAvailableRooms(
             new DateTime(2026, 9, 1, 10, 0, 0),
@@ -68,7 +69,7 @@ public class RoomSearchServiceTests
             "Room A",
             2000m,
             50,
-            new List<Service>());
+            new List<ServiceRequest>());
         _bookingService.CreateBooking(
             room,
             new DateTime(2026, 9, 1, 10, 0, 0),
@@ -90,7 +91,7 @@ public class RoomSearchServiceTests
             "Room A",
             2000m,
             50,
-            new List<Service>());
+            new List<ServiceRequest>());
 
         _bookingService.CreateBooking(
             room,
@@ -114,7 +115,7 @@ public class RoomSearchServiceTests
             "Room A",
             2000m,
             30,
-            new List<Service>());
+            new List<ServiceRequest>());
         // Act
         var result = _roomSearchService.SearchAvailableRooms(
             new DateTime(2026, 9, 1, 10, 0, 0),
