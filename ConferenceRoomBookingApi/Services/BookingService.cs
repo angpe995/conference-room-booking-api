@@ -21,7 +21,16 @@ public class BookingService
     private const decimal PeakMarkup = 1.15m;
     private const decimal EveningDiscount = 0.80m;
     private const decimal StandardMultiplier = 1.00m;
-
+    // Defines the structure for a pricing rule.
+    private record PriceRule(int StartHour, int EndHour, decimal Multiplier);
+    // List of predefined pricing rules evaluated during price calculation.
+    private readonly List<PriceRule> _priceRules = new()
+    {
+        new PriceRule(MorningStartHour, MorningEndHour, MorningDiscount),
+        new PriceRule(PeakStartHour, PeakEndHour, PeakMarkup),
+        // The evening period starts immediately after the standard period ends
+        new PriceRule(StandardEndHour, EveningEndHour, EveningDiscount)
+    };
     private readonly DataStore _dataStore;
     public BookingService(DataStore dataStore)
     {
@@ -93,22 +102,9 @@ public class BookingService
     // Returns the price multiplier for the given hour.
     private decimal GetPriceMultiplier(DateTime startTime)
     {
-        if (startTime.Hour >= PeakStartHour &&
-            startTime.Hour < PeakEndHour)
-        {
-            return PeakMarkup;
-        }
-        if (startTime.Hour >= StandardEndHour &&
-            startTime.Hour < EveningEndHour)
-        {
-            return EveningDiscount;
-        }
-        if (startTime.Hour >= MorningStartHour &&
-            startTime.Hour < MorningEndHour)
-        {
-            return MorningDiscount;
-        }
-        return StandardMultiplier;
+        var rule = _priceRules.FirstOrDefault(r =>
+            startTime.Hour >= r.StartHour && startTime.Hour < r.EndHour);
+        return rule?.Multiplier ?? StandardMultiplier;
     }
     // Calculates the room price for the entire booking duration.
     // Currently supports full-hour bookings only.
