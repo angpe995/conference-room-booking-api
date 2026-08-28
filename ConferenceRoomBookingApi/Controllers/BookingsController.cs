@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ConferenceRoomBookingApi.Services;
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.DTOs;
+using ConferenceRoomBookingApi.Exceptions;
 namespace ConferenceRoomBookingApi.Controllers;
 
 [ApiController]
@@ -24,25 +25,14 @@ public class BookingController : ControllerBase
         Room? room = _roomService.GetRoomById(request.RoomId);
         if (room is null)
         {
-            return NotFound(
+            throw new NotFoundException(
                 $"Room with ID {request.RoomId} was not found.");
         }
-        // Get the services selected for this room
-        List<Service> services = room.Services
-            .Where(s => request.ServiceIds.Contains(s.Id))
-            .ToList();
-        // Calculate the total booking price
-        decimal totalPrice = _bookingService.CalculatePrice(
-            services,
-            room,
-            request.StartTime,
-            request.EndTime);
         // Create and store the booking
         Booking booking = _bookingService.CreateBooking(
             room,
             request.StartTime,
-            request.EndTime,
-            totalPrice);
+            request.EndTime,request.ServiceIds);
         return Ok(booking);
     }
 }

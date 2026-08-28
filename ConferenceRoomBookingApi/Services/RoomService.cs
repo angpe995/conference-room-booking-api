@@ -1,6 +1,7 @@
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Data;
 using ConferenceRoomBookingApi.DTOs;
+using ConferenceRoomBookingApi.Exceptions;
 namespace ConferenceRoomBookingApi.Services;
 
 public class RoomService
@@ -80,7 +81,7 @@ public class RoomService
         var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
         if (room is null)
         {
-            throw new ArgumentException("Room was not found.");
+            throw new NotFoundException("Room was not found.");
         }
         // creates a new service
         var service = new Service(name, price)
@@ -106,13 +107,13 @@ public class RoomService
         var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
         if (room is null)
         {
-            throw new ArgumentException("Room was not found.");
+            throw new NotFoundException("Room was not found.");
         }
         // finds the service by id
         var service = room.Services.FirstOrDefault(s => s.Id == serviceId);
         if (service is null)
         {
-            throw new ArgumentException("Service was not found for this room.");
+            throw new NotFoundException("Service was not found for this room.");
         }
         // updates the service price
         service.UpdatePrice(newPrice);
@@ -134,7 +135,7 @@ public class RoomService
         var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
         if (room == null)
         {
-            throw new ArgumentException("Room was not found.");
+            throw new NotFoundException("Room was not found.");
         }
         // updates the room price if a new price was provided.
         if (newPrice is decimal price)
@@ -162,7 +163,7 @@ public class RoomService
         var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
         if (room is null)
         {
-            throw new ArgumentException("Room was not found.");
+            throw new NotFoundException("Room was not found.");
         }
         _dataStore.Rooms.Remove(room);
     }
