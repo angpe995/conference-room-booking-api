@@ -24,7 +24,13 @@ public class RoomService
     private readonly DataStore _dataStore;
     public RoomService(DataStore DataStore)
     {
-        _dataStore=DataStore;
+        _dataStore = DataStore;
+    }
+    //searchs room by id
+    public Room? GetRoomById(int roomId)
+    {
+        return _dataStore.Rooms
+            .FirstOrDefault(r => r.Id == roomId);
     }
     // Creates a new room and adds it to the room list
     public Room CreateRoom(
