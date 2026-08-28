@@ -1,6 +1,7 @@
 ﻿using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Services;
 using ConferenceRoomBookingApi.Data;
+using ConferenceRoomBookingApi.Exceptions;
 namespace ConferenceRoomBookingApi.Tests;
 
 public class BookingServiceTests
@@ -164,7 +165,7 @@ public class BookingServiceTests
             startTime,
             endTime,
             4000);
-        Assert.Throws<InvalidOperationException>(() =>
+        Assert.Throws<ConflictException>(() =>
         {
             _bookingService.CreateBooking(
                 _room,

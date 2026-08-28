@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ConferenceRoomBookingApi.Services;
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.DTOs;
+using ConferenceRoomBookingApi.Exceptions;
 namespace ConferenceRoomBookingApi.Controllers;
 
 [ApiController]
@@ -24,7 +25,7 @@ public class BookingController : ControllerBase
         Room? room = _roomService.GetRoomById(request.RoomId);
         if (room is null)
         {
-            return NotFound(
+            throw new NotFoundException(
                 $"Room with ID {request.RoomId} was not found.");
         }
         // Get the services selected for this room
