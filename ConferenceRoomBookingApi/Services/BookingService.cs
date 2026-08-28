@@ -1,6 +1,7 @@
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Data;
 using ConferenceRoomBookingApi.Exceptions;
+using ConferenceRoomBookingApi.DTOs;
 namespace ConferenceRoomBookingApi.Services;
 
 public class BookingService
@@ -46,18 +47,28 @@ public class BookingService
         Room room,
         DateTime startTime,
         DateTime endTime,
-        decimal totalPrice)
+        List<int> selectedServicesIds)
     {
         // Throws an error when attempting to book outside the allowed hours (23:00–06:00). 
         if (!IsWithinBookingHours(startTime, endTime))
         {
             throw new ArgumentException("Bookings are allowed only between 06:00 and 23:00.");
         }
+        // Ensures that the booking end time is later than the start time.
+        if (endTime <= startTime)
+        {
+            throw new ArgumentException(
+                "End time must be later than start time.");
+        }
         //throws error when the room is alredy booked for the requested time 
         if (!CheckAvailability(room.Id, startTime, endTime))
         {
             throw new ConflictException("Room is already booked.");
         }
+        List<Service> services = room.Services
+            .Where(s => selectedServicesIds.Contains(s.Id))
+            .ToList();
+        decimal totalPrice = CalculatePrice(services, room, startTime, endTime);
         var booking = new Booking
         {
             Id = NextId(),
@@ -104,6 +115,12 @@ public class BookingService
     private decimal CalculateRoomPrice(DateTime startTime, DateTime endTime, decimal price)
     {
         decimal totalPrice = 0;
+        TimeSpan difference = endTime - startTime;
+        if (difference.TotalHours <= 0 || difference.TotalHours % 1 != 0)
+        {
+            throw new ArgumentException(
+                "Booking duration must be a positive whole number of hours.");
+        }
         for (DateTime currentHour = startTime; currentHour < endTime; currentHour = currentHour.AddHours(1))
         {
             totalPrice += GetPriceMultiplier(currentHour) * price;
