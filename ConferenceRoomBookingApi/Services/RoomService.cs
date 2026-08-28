@@ -1,6 +1,6 @@
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Data;
-
+using ConferenceRoomBookingApi.DTOs;
 namespace ConferenceRoomBookingApi.Services;
 
 public class RoomService
@@ -36,7 +36,7 @@ public class RoomService
     public Room CreateRoom(
         string name,
         decimal pricePerHour,
-        int capacity, List<Service>? services)
+        int capacity, List<ServiceRequest>? services)
     {
         if (pricePerHour <= MinPrice)
         {
@@ -51,10 +51,19 @@ public class RoomService
             Id = NextRoomId(),
             Name = name,
             Capacity = capacity,
-            Services = new List<Service>(services ?? new List<Service>())
         };
         room.UpdatePrice(pricePerHour);
         _dataStore.Rooms.Add(room);
+        if (services is not null)
+        {
+            foreach (var serviceRequest in services)
+            {
+                CreateServiceForRoom(
+                    room.Id,
+                    serviceRequest.Name,
+                    serviceRequest.Price);
+            }
+        }
         return room;
     }
     // Creates a new service and adds it to the specified room.
@@ -113,12 +122,13 @@ public class RoomService
     public Room UpdateRoom(
         int roomId,
         decimal? newPrice,
-        Service? newService)
+        ServiceRequest? serviceToAdd)
     {
         // checks that at least one update argument was provided.
-        if (newPrice == null && newService == null)
+        if (newPrice is null && serviceToAdd is null)
         {
-            throw new ArgumentException("either newPrice or newService must not equal null");
+            throw new ArgumentException(
+                "Either newPrice or serviceToAdd must be provided.");
         }
         // finds the room by id
         var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
@@ -137,7 +147,13 @@ public class RoomService
             room.UpdatePrice(price);
         }
         // adds the new service if one was provided.
-        if (newService is not null) room.Services.Add(newService);
+        if (serviceToAdd is not null)
+        {
+            CreateServiceForRoom(
+            roomId,
+            serviceToAdd.Name,
+            serviceToAdd.Price);
+        }
         return room;
     }
     // Deletes a room by its ID.
