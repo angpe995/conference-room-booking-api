@@ -2,23 +2,30 @@ using ConferenceRoomBookingApi.Data;
 using ConferenceRoomBookingApi.DTOs;
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConferenceRoomBookingApi.Tests;
 
 public class RoomSearchServiceTests
 {
+    private readonly AppDbContext _context;
     private readonly RoomSearchService _roomSearchService;
     private readonly RoomService _roomService;
     private readonly BookingService _bookingService;
-    private readonly DataStore _dataStore;
+
     public RoomSearchServiceTests()
     {
-        _dataStore = new DataStore();
-        _roomService = new RoomService(_dataStore);
-        _bookingService = new BookingService(_dataStore);
+        // Configure In-Memory database for testing with a unique name per test instance
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        _context = new AppDbContext(options);
+        // Initialize services with the EF Core context instead of DataStore
+        _roomService = new RoomService(_context);
+        _bookingService = new BookingService(_context);
         _roomSearchService = new RoomSearchService(
             _bookingService,
-            _dataStore);
+            _context);
     }
     [Fact]
     public void SearchAvailableRooms_ReturnsRoomsWithEnoughCapacity()
