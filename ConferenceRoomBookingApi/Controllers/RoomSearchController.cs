@@ -5,7 +5,7 @@ using ConferenceRoomBookingApi.DTOs;
 namespace ConferenceRoomBookingApi.Controllers;
 
 [ApiController]
-[Route("api/rooms")]
+[Route("api/Rooms")]
 public class RoomSearchController : ControllerBase
 {
     private readonly RoomSearchService _roomSearchService;
