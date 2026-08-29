@@ -5,12 +5,10 @@ namespace ConferenceRoomBookingApi.Services;
 
 public class RoomSearchService
 {
-    private readonly BookingService _bookingService;
     private readonly AppDbContext _context;
-    public RoomSearchService(BookingService bookingService, AppDbContext context)
+    public RoomSearchService(AppDbContext context)
     {
         _context = context;
-        _bookingService = bookingService;
     }
     public async Task <List<Room>> SearchAvailableRoomsAsync(
         DateTime startTime,

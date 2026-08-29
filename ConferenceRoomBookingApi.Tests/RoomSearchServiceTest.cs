@@ -24,7 +24,6 @@ public class RoomSearchServiceTests
         _roomService = new RoomService(_context);
         _bookingService = new BookingService(_context);
         _roomSearchService = new RoomSearchService(
-            _bookingService,
             _context);
     }
     [Fact]
