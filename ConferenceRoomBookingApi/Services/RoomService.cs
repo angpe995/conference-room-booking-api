@@ -81,33 +81,6 @@ public class RoomService
         return service;
     }
     // Updates the price of an existing service for the specified room.
-    public async Task <Service> UpdateServiceForRoomAsync(
-        int roomId,
-        int serviceId,
-        decimal newPrice)
-    {
-        //checks the price argument
-        if (newPrice <= MinPrice)
-        {
-            throw new ArgumentException("Service price must be greater than zero");
-        }
-        // finds the room by id
-        var room = await GetRoomByIdAsync(roomId);
-        if (room is null)
-        {
-            throw new NotFoundException("Room was not found.");
-        }
-        // finds the service by id
-        var service = room.Services.FirstOrDefault(s => s.Id == serviceId);
-        if (service is null)
-        {
-            throw new NotFoundException("Service was not found for this room.");
-        }
-        // updates the service price
-        service.UpdatePrice(newPrice);
-        await _context.SaveChangesAsync();
-        return service;
-    }
     // optionally updates the room price or adds a new service.
     public async Task <Room> UpdateRoomAsync(
         int roomId,

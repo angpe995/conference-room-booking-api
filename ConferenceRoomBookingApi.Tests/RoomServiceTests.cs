@@ -104,51 +104,6 @@ public class RoomServiceTests
                 ServiceName,
                 -200));
     }
-
-    [Fact]
-    public async Task UpdateServiceForRoom_ReturnsService_WhenPriceIsGreaterThanZero()
-    {
-        // Arrange
-        Room room =await _roomService.CreateRoomAsync(
-            RoomName,
-            RoomPricePerHour,
-            RoomCapacity,
-            null);
-
-        Service service = await _roomService.CreateServiceForRoomAsync(
-            room.Id,
-            ServiceName,
-            ServicePricePerHour);
-        // Act
-        Service updatedService = await _roomService.UpdateServiceForRoomAsync(
-            room.Id,
-            service.Id,
-            300);
-        // Assert
-        Assert.NotNull(updatedService);
-        Assert.Contains(room.Services, s => s.Id == updatedService.Id);
-        Assert.Equal(300, updatedService.Price);
-    }
-    [Fact]
-    public async Task UpdateServiceForRoom_Throws_WhenPriceIsLessThanOrEqualToZero()
-    {
-        // Arrange
-        Room room = await _roomService.CreateRoomAsync(
-            RoomName,
-            RoomPricePerHour,
-            RoomCapacity,
-            null);
-        Service service = await _roomService.CreateServiceForRoomAsync(
-            room.Id,
-            ServiceName,
-            ServicePricePerHour);
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
-            await _roomService.UpdateServiceForRoomAsync(
-                room.Id,
-                service.Id,
-                -200));
-    }
     [Fact]
     public async Task UpdateRoom_ReturnsRoom_WhenPriceIsGreaterThanZero()
     {
