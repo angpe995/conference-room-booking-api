@@ -31,20 +31,14 @@ public class BookingService
         // The evening period starts immediately after the standard period ends
         new PriceRule(StandardEndHour, EveningEndHour, EveningDiscount)
     };
-    private readonly DataStore _dataStore;
-    public BookingService(DataStore dataStore)
+    private readonly AppDbContext _context;
+    public BookingService(AppDbContext context)
     {
-        _dataStore = dataStore;
+        _context = context;
     }
     // Allowed booking hours.
     private const int BookingStartHour = 6;
     private const int BookingEndHour = 23;
-    private int _nextId = 1;
-    // Generates a unique ID for a new booking (temporary such structure)
-    private int NextId()
-    {
-        return _nextId++;
-    }
     // Checks whether the booking falls within the allowed hours.
     private bool IsWithinBookingHours(DateTime startTime, DateTime endTime)
     {
@@ -83,6 +77,7 @@ public class BookingService
         List<Service> services = room.Services
             .Where(s => selectedServicesIds.Contains(s.Id))
             .ToList();
+            
         if (services.Count != selectedServicesIds.Count)
         {
             throw new ArgumentException(
@@ -91,21 +86,21 @@ public class BookingService
         decimal totalPrice = CalculatePrice(services, room, startTime, endTime);
         var booking = new Booking
         {
-            Id = NextId(),
             RoomId = room.Id,
             StartTime = startTime,
             EndTime = endTime,
             TotalPrice = totalPrice
         };
 
-        _dataStore.Bookings.Add(booking);
+        _context.Bookings.Add(booking);
+        _context.SaveChanges();
         return booking;
     }
     // Checks whether the room has no conflicting bookings.
     public bool CheckAvailability(int roomId, DateTime StartTime,
      DateTime EndTime)
     {
-        return !_dataStore.Bookings.Any(booking =>
+        return !_context.Bookings.Any(booking =>
             booking.RoomId == roomId &&
             booking.StartTime < EndTime &&
             StartTime < booking.EndTime);

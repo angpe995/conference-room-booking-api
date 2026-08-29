@@ -2,17 +2,22 @@
 using ConferenceRoomBookingApi.Services;
 using ConferenceRoomBookingApi.Data;
 using ConferenceRoomBookingApi.Exceptions;
+using Microsoft.EntityFrameworkCore;
 namespace ConferenceRoomBookingApi.Tests;
 
 public class BookingServiceTests
 {
     private readonly BookingService _bookingService;
-    private readonly DataStore _dataStore= new();
+    private readonly AppDbContext _context;
     private readonly Room _room;
     private readonly List<Service> _services;
     public BookingServiceTests()
     {
-        _bookingService = new BookingService(_dataStore);
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+           .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+           .Options;
+        _context = new AppDbContext(options);
+        _bookingService = new BookingService(_context);
         _room = new Room
         {
             Id = 1,
@@ -184,7 +189,7 @@ public class BookingServiceTests
             Name = "Room B",
             Capacity = 100,
         };
-            anotherRoom.UpdatePrice(3500);
+        anotherRoom.UpdatePrice(3500);
         _bookingService.CreateBooking(
             anotherRoom,
             new DateTime(2026, 9, 1, 10, 0, 0),

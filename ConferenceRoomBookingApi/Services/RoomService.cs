@@ -2,6 +2,7 @@ using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Data;
 using ConferenceRoomBookingApi.DTOs;
 using ConferenceRoomBookingApi.Exceptions;
+using Microsoft.EntityFrameworkCore;
 namespace ConferenceRoomBookingApi.Services;
 
 public class RoomService
@@ -10,27 +11,16 @@ public class RoomService
     private const decimal MinPrice = 0m;
     // Minimum allowed room capacity
     private const int MinCapacity = 0;
-    private int _nextRoomId = 1;
-    // Generates a unique ID for a new room.
-    private int NextRoomId()
+    private readonly AppDbContext _context;
+    public RoomService(AppDbContext context)
     {
-        return _nextRoomId++;
-    }
-    // Generates a unique ID for a new service.
-    private int _nextServiceId = 1;
-    private int NextServiceId()
-    {
-        return _nextServiceId++;
-    }
-    private readonly DataStore _dataStore;
-    public RoomService(DataStore DataStore)
-    {
-        _dataStore = DataStore;
+        _context = context;
     }
     //searchs room by id
     public Room? GetRoomById(int roomId)
     {
-        return _dataStore.Rooms
+        return _context.Rooms
+            .Include(r => r.Services)
             .FirstOrDefault(r => r.Id == roomId);
     }
     // Creates a new room and adds it to the room list
@@ -49,12 +39,12 @@ public class RoomService
         }
         Room room = new Room
         {
-            Id = NextRoomId(),
             Name = name,
             Capacity = capacity,
         };
         room.UpdatePrice(pricePerHour);
-        _dataStore.Rooms.Add(room);
+        _context.Rooms.Add(room);
+        _context.SaveChanges();
         if (services is not null)
         {
             foreach (var serviceRequest in services)
@@ -65,6 +55,7 @@ public class RoomService
                     serviceRequest.Price);
             }
         }
+        _context.SaveChanges();
         return room;
     }
     // Creates a new service and adds it to the specified room.
@@ -78,18 +69,16 @@ public class RoomService
             throw new ArgumentException("Service price must be greater than zero");
         }
         // finds the room by id
-        var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
+        var room = GetRoomById(roomId);
         if (room is null)
         {
             throw new NotFoundException("Room was not found.");
         }
         // creates a new service
-        var service = new Service(name, price)
-        {
-            Id = NextServiceId()
-        };
+        var service = new Service(name, price);
         // updates list
         room.Services.Add(service);
+        _context.SaveChanges();
         return service;
     }
     // Updates the price of an existing service for the specified room.
@@ -104,7 +93,7 @@ public class RoomService
             throw new ArgumentException("Service price must be greater than zero");
         }
         // finds the room by id
-        var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
+        var room = GetRoomById(roomId);
         if (room is null)
         {
             throw new NotFoundException("Room was not found.");
@@ -117,6 +106,7 @@ public class RoomService
         }
         // updates the service price
         service.UpdatePrice(newPrice);
+        _context.SaveChanges();
         return service;
     }
     // optionally updates the room price or adds a new service.
@@ -132,7 +122,7 @@ public class RoomService
                 "Either newPrice or serviceToAdd must be provided.");
         }
         // finds the room by id
-        var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
+        var room = GetRoomById(roomId);
         if (room == null)
         {
             throw new NotFoundException("Room was not found.");
@@ -146,6 +136,7 @@ public class RoomService
                     "Price per hour must be greater than zero.");
             }
             room.UpdatePrice(price);
+            _context.SaveChanges();
         }
         // adds the new service if one was provided.
         if (serviceToAdd is not null)
@@ -155,16 +146,18 @@ public class RoomService
             serviceToAdd.Name,
             serviceToAdd.Price);
         }
+        _context.SaveChanges();
         return room;
     }
     // Deletes a room by its ID.
     public void DeleteRoom(int roomId)
     {
-        var room = _dataStore.Rooms.FirstOrDefault(r => r.Id == roomId);
+        var room = GetRoomById(roomId);
         if (room is null)
         {
             throw new NotFoundException("Room was not found.");
         }
-        _dataStore.Rooms.Remove(room);
+        _context.Rooms.Remove(room);
+        _context.SaveChanges();
     }
 }

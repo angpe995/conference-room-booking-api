@@ -3,6 +3,7 @@ using ConferenceRoomBookingApi.Services;
 using ConferenceRoomBookingApi.Data;
 using ConferenceRoomBookingApi.DTOs;
 using ConferenceRoomBookingApi.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConferenceRoomBookingApi.Tests;
 
@@ -14,11 +15,14 @@ public class RoomServiceTests
     private const decimal RoomPricePerHour = 2000m;
     private const string ServiceName = "Projector";
     private const decimal ServicePricePerHour = 500m;
-    private readonly DataStore _dataStore;
+    private readonly AppDbContext _context;
     public RoomServiceTests()
     {
-        _dataStore = new DataStore();
-        _roomService = new RoomService(_dataStore);
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        _context = new AppDbContext(options);
+        _roomService = new RoomService(_context);
     }
     [Fact]
     public void CreateRoom_ReturnsRoom_WhenPriceAndCapacityAreGreaterThanZero()
