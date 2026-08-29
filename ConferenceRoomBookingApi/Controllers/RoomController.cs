@@ -16,10 +16,10 @@ public class RoomsController : ControllerBase
     }
     // Creates a new room with its available services.
     [HttpPost]
-    public ActionResult<Room> CreateRoom(
+    public async Task<ActionResult<Room>> CreateRoom(
     [FromBody] CreateRoomRequest request)
     {
-        var room = _roomService.CreateRoom(
+        var room = await _roomService.CreateRoomAsync(
             request.Name,
             request.PricePerHour,
             request.Capacity,
@@ -28,18 +28,18 @@ public class RoomsController : ControllerBase
     }
     // Deletes a room by its ID.
     [HttpDelete("{id}")]
-    public IActionResult DeleteRoom(int id)
+    public async Task<IActionResult> DeleteRoom(int id)
     {
-        _roomService.DeleteRoom(id);
+        await _roomService.DeleteRoomAsync(id);
         return NoContent();
     }
     // Updates the room price and optionally adds a new service.
     [HttpPut("{id}")]
-    public ActionResult<Room> UpdateRoom(
+    public async Task<ActionResult<Room>> UpdateRoom(
     int id,
     [FromBody] UpdateRoomRequest request)
     {
-        var room = _roomService.UpdateRoom(
+        var room =await _roomService.UpdateRoomAsync(
             id,
             request.PricePerHour,
             request.ServiceToAdd);

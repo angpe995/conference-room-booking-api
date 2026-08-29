@@ -15,11 +15,11 @@ public class RoomSearchController : ControllerBase
     }
     // Searches for available rooms by time and required capacity.
     [HttpGet("available")]
-    public ActionResult<List<Room>> SearchAvailableRooms(
+    public async Task<ActionResult<List<Room>>> SearchAvailableRooms(
         [FromQuery] SearchAvailableRoomsRequest request)
     {
         // Get rooms matching the requested criteria.
-        var rooms = _roomSearchService.SearchAvailableRooms(
+        var rooms = await _roomSearchService.SearchAvailableRoomsAsync(
             request.StartTime,
             request.EndTime,
             request.Capacity);
