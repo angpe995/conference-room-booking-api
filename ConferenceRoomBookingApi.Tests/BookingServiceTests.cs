@@ -270,5 +270,20 @@ public class BookingServiceTests
                 endTime,
                 new List<int>()));
     }
+    [Fact]
+    public void CreateBooking_Throws_WhenServicesNotFounded()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
+        var endTime = new DateTime(2026, 9, 1, 12, 0, 0);
+        // Act & Assert
+        var invalidServiceIds = new List<int> { 999 };
+        Assert.Throws<ArgumentException>(() =>
+            _bookingService.CreateBooking(
+                _room,
+                startTime,
+                endTime,
+                invalidServiceIds));
+    }
 
 }

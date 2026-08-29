@@ -83,6 +83,11 @@ public class BookingService
         List<Service> services = room.Services
             .Where(s => selectedServicesIds.Contains(s.Id))
             .ToList();
+        if (services.Count != selectedServicesIds.Count)
+        {
+            throw new ArgumentException(
+                "One or more selected services were not found.");
+        }
         decimal totalPrice = CalculatePrice(services, room, startTime, endTime);
         var booking = new Booking
         {
