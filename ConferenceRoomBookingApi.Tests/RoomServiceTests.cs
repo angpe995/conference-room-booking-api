@@ -89,7 +89,7 @@ public class RoomServiceTests
     public async Task CreateServiceForRoom_Throws_WhenPriceIsLessThanOrEqualToZero()
     {
         // Arrange
-        Room room =await _roomService.CreateRoomAsync(
+        Room room = await _roomService.CreateRoomAsync(
             RoomName,
             RoomPricePerHour,
             RoomCapacity,
@@ -132,7 +132,7 @@ public class RoomServiceTests
             RoomPricePerHour,
             RoomCapacity,
             null);
-        ServiceRequest service = new ServiceRequest{Name=ServiceName,Price=RoomPricePerHour};
+        ServiceRequest service = new ServiceRequest { Name = ServiceName, Price = RoomPricePerHour };
         // Act
         Room updatedRoom = await _roomService.UpdateRoomAsync(
             room.Id,
@@ -187,17 +187,50 @@ public class RoomServiceTests
     public async Task CreateRoom_GeneratesUniqueIds()
     {
         // Arrange
-        var firstRoom =await _roomService.CreateRoomAsync(
+        var firstRoom = await _roomService.CreateRoomAsync(
             RoomName,
             RoomPricePerHour,
             RoomCapacity,
             new List<ServiceRequest>());
-        var secondRoom =await _roomService.CreateRoomAsync(
+        var secondRoom = await _roomService.CreateRoomAsync(
             "Room B",
             3000m,
             100,
             new List<ServiceRequest>());
         // Assert
         Assert.NotEqual(firstRoom.Id, secondRoom.Id);
+    }
+    [Fact]
+    public async Task DeleteService_Throws_WhenServiceDoesNotExist()
+    {
+        // Arrange
+        const int missingServiceId = 999;
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(async () =>
+            await _roomService.DeleteServiceAsync(missingServiceId));
+    }
+    [Fact]
+    public async Task DeleteService_RemovesExistingService()
+    {
+        // Arrange
+        Room room = await _roomService.CreateRoomAsync(
+            RoomName,
+            RoomPricePerHour,
+            RoomCapacity,
+            null);
+        Service service = await _roomService.CreateServiceForRoomAsync(
+            room.Id,
+            ServiceName,
+            ServicePricePerHour);
+        int serviceId = service.Id;
+        // Act
+        await _roomService.DeleteServiceAsync(serviceId);
+        // Assert
+        Service? deletedService = await _context.Services
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == serviceId);
+
+        Assert.Null(deletedService);
     }
 }

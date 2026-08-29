@@ -33,6 +33,13 @@ public class RoomsController : ControllerBase
         await _roomService.DeleteRoomAsync(id);
         return NoContent();
     }
+     // Deletes a service by its ID.
+    [HttpDelete("services/{id}")]
+    public async Task<IActionResult> DeleteService(int id)
+    {
+        await _roomService.DeleteServiceAsync(id);
+        return NoContent();
+    }
     // Updates the room price and optionally adds a new service.
     [HttpPut("{id}")]
     public async Task<ActionResult<Room>> UpdateRoom(
