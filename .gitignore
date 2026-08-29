@@ -1,0 +1,7 @@
+ConferenceRoomBookingApi.Tests/obj
+ConferenceRoomBookingApi.Tests/bin
+ConferenceRoomBookingApi/obj
+ConferenceRoomBookingApi/bin
+.vs/
+*.user
+*.suo
