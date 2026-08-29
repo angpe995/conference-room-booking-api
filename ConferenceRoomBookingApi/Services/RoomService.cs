@@ -17,14 +17,14 @@ public class RoomService
         _context = context;
     }
     //searchs room by id
-    public Room? GetRoomById(int roomId)
+    public async Task <Room?> GetRoomByIdAsync(int roomId)
     {
-        return _context.Rooms
+        return await _context.Rooms
             .Include(r => r.Services)
-            .FirstOrDefault(r => r.Id == roomId);
+            .FirstOrDefaultAsync(r => r.Id == roomId);
     }
     // Creates a new room and adds it to the room list
-    public Room CreateRoom(
+    public async Task<Room> CreateRoomAsync(
         string name,
         decimal pricePerHour,
         int capacity, List<ServiceRequest>? services)
@@ -44,22 +44,21 @@ public class RoomService
         };
         room.UpdatePrice(pricePerHour);
         _context.Rooms.Add(room);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         if (services is not null)
         {
             foreach (var serviceRequest in services)
             {
-                CreateServiceForRoom(
+                await CreateServiceForRoomAsync(
                     room.Id,
                     serviceRequest.Name,
                     serviceRequest.Price);
             }
         }
-        _context.SaveChanges();
         return room;
     }
     // Creates a new service and adds it to the specified room.
-    public Service CreateServiceForRoom(
+    public async Task<Service> CreateServiceForRoomAsync(
         int roomId,
         string name,
         decimal price)
@@ -69,7 +68,7 @@ public class RoomService
             throw new ArgumentException("Service price must be greater than zero");
         }
         // finds the room by id
-        var room = GetRoomById(roomId);
+        var room = await GetRoomByIdAsync(roomId);
         if (room is null)
         {
             throw new NotFoundException("Room was not found.");
@@ -78,11 +77,11 @@ public class RoomService
         var service = new Service(name, price);
         // updates list
         room.Services.Add(service);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return service;
     }
     // Updates the price of an existing service for the specified room.
-    public Service UpdateServiceForRoom(
+    public async Task <Service> UpdateServiceForRoomAsync(
         int roomId,
         int serviceId,
         decimal newPrice)
@@ -93,7 +92,7 @@ public class RoomService
             throw new ArgumentException("Service price must be greater than zero");
         }
         // finds the room by id
-        var room = GetRoomById(roomId);
+        var room = await GetRoomByIdAsync(roomId);
         if (room is null)
         {
             throw new NotFoundException("Room was not found.");
@@ -106,11 +105,11 @@ public class RoomService
         }
         // updates the service price
         service.UpdatePrice(newPrice);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return service;
     }
     // optionally updates the room price or adds a new service.
-    public Room UpdateRoom(
+    public async Task <Room> UpdateRoomAsync(
         int roomId,
         decimal? newPrice,
         ServiceRequest? serviceToAdd)
@@ -122,7 +121,7 @@ public class RoomService
                 "Either newPrice or serviceToAdd must be provided.");
         }
         // finds the room by id
-        var room = GetRoomById(roomId);
+        var room = await GetRoomByIdAsync(roomId);
         if (room == null)
         {
             throw new NotFoundException("Room was not found.");
@@ -136,28 +135,28 @@ public class RoomService
                     "Price per hour must be greater than zero.");
             }
             room.UpdatePrice(price);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         // adds the new service if one was provided.
         if (serviceToAdd is not null)
         {
-            CreateServiceForRoom(
+            await CreateServiceForRoomAsync(
             roomId,
             serviceToAdd.Name,
             serviceToAdd.Price);
         }
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return room;
     }
     // Deletes a room by its ID.
-    public void DeleteRoom(int roomId)
+    public async Task DeleteRoomAsync(int roomId)
     {
-        var room = GetRoomById(roomId);
+        var room =await GetRoomByIdAsync(roomId);
         if (room is null)
         {
             throw new NotFoundException("Room was not found.");
         }
         _context.Rooms.Remove(room);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 }

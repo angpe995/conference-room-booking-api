@@ -12,7 +12,7 @@ public class RoomSearchService
         _context = context;
         _bookingService = bookingService;
     }
-    public List<Room> SearchAvailableRooms(
+    public async Task <List<Room>> SearchAvailableRoomsAsync(
         DateTime startTime,
         DateTime endTime,
         int capacity)
@@ -38,7 +38,7 @@ public class RoomSearchService
             throw new ArgumentException(
                 "Capacity must be greater than zero.");
         }
-        return _context.Rooms
+        return await _context.Rooms
         .Include(room => room.Services)
             .Where(room =>
                 room.Capacity >= capacity &&
@@ -46,6 +46,6 @@ public class RoomSearchService
                     booking.RoomId == room.Id &&
                     booking.StartTime < endTime &&
                     startTime < booking.EndTime))
-            .ToList();
+            .ToListAsync();
     }
 }

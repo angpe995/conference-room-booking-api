@@ -30,13 +30,13 @@ public class BookingServiceTests
 
     }
     [Fact]
-    public void CheckAvailability_ReturnsTrue_WhenRoomHasNoBookings()
+    public async Task CheckAvailability_ReturnsTrue_WhenRoomHasNoBookings()
     {
         // Arrange
         DateTime startTime = new DateTime(2026, 9, 1, 10, 0, 0);
         DateTime endTime = new DateTime(2026, 9, 1, 12, 0, 0);
         // Act
-        bool result = _bookingService.CheckAvailability(
+        bool result = await _bookingService.CheckAvailability(
             _room.Id,
             startTime,
             endTime);
@@ -44,18 +44,18 @@ public class BookingServiceTests
         Assert.True(result);
     }
     [Fact]
-    public void CheckAvailability_ReturnsFalse_WhenBookingOverlaps()
+    public async Task CheckAvailability_ReturnsFalse_WhenBookingOverlaps()
     {
         // Arrange
         DateTime existingStart = new DateTime(2026, 9, 1, 10, 0, 0);
         DateTime existingEnd = new DateTime(2026, 9, 1, 12, 0, 0);
-        _bookingService.CreateBooking(
+        await _bookingService.CreateBookingAsync(
             _room,
             existingStart,
             existingEnd,
             new List<int>());
         // Act
-        bool result = _bookingService.CheckAvailability(
+        bool result = await _bookingService.CheckAvailability(
             1,
             new DateTime(2026, 9, 1, 11, 0, 0),
             new DateTime(2026, 9, 1, 13, 0, 0));
@@ -63,16 +63,16 @@ public class BookingServiceTests
         Assert.False(result);
     }
     [Fact]
-    public void CheckAvailability_ReturnsTrue_WhenNewBookingStartsWhenPreviousEnds()
+    public async Task CheckAvailability_ReturnsTrue_WhenNewBookingStartsWhenPreviousEnds()
     {
         // Arrange
-        _bookingService.CreateBooking(
+        await _bookingService.CreateBookingAsync(
             _room,
             new DateTime(2026, 9, 1, 10, 0, 0),
             new DateTime(2026, 9, 1, 12, 0, 0),
             new List<int>());
         // Act
-        bool result = _bookingService.CheckAvailability(
+        bool result = await _bookingService.CheckAvailability(
             1,
             new DateTime(2026, 9, 1, 12, 0, 0),
             new DateTime(2026, 9, 1, 14, 0, 0));
@@ -140,13 +140,13 @@ public class BookingServiceTests
         Assert.Equal(3700, result);
     }
     [Fact]
-    public void CreateBooking_CreatesBookingWithCorrectData()
+    public async Task CreateBooking_CreatesBookingWithCorrectData()
     {
         // Arrange
         var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
         var endTime = new DateTime(2026, 9, 1, 12, 0, 0);
         // Act
-        var booking = _bookingService.CreateBooking(
+        var booking = await _bookingService.CreateBookingAsync(
             _room,
             startTime,
             endTime,
@@ -159,20 +159,20 @@ public class BookingServiceTests
         Assert.Equal(4000, booking.TotalPrice);
     }
     [Fact]
-    public void CreateBooking_Throws_WhenRoomIsNotAvailable()
+    public async Task CreateBooking_Throws_WhenRoomIsNotAvailable()
     {
         // Arrange
         var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
         var endTime = new DateTime(2026, 9, 1, 12, 0, 0);
         // Act & Assert
-        _bookingService.CreateBooking(
+        await _bookingService.CreateBookingAsync(
             _room,
             startTime,
             endTime,
             new List<int>());
-        Assert.Throws<ConflictException>(() =>
+        await Assert.ThrowsAsync<ConflictException>(async () =>
         {
-            _bookingService.CreateBooking(
+            await _bookingService.CreateBookingAsync(
                 _room,
                 startTime,
                 endTime,
@@ -180,7 +180,7 @@ public class BookingServiceTests
         });
     }
     [Fact]
-    public void CheckAvailability_ReturnsTrue_WhenDifferentRoomIsBooked()
+    public async Task CheckAvailability_ReturnsTrue_WhenDifferentRoomIsBooked()
     {
         // Arrange
         var anotherRoom = new Room
@@ -190,13 +190,13 @@ public class BookingServiceTests
             Capacity = 100,
         };
         anotherRoom.UpdatePrice(3500);
-        _bookingService.CreateBooking(
+        await _bookingService.CreateBookingAsync(
             anotherRoom,
             new DateTime(2026, 9, 1, 10, 0, 0),
             new DateTime(2026, 9, 1, 12, 0, 0),
             new List<int>());
         // Act
-        bool result = _bookingService.CheckAvailability(
+        bool result = await _bookingService.CheckAvailability(
             _room.Id,
             new DateTime(2026, 9, 1, 10, 0, 0),
             new DateTime(2026, 9, 1, 12, 0, 0));
@@ -205,14 +205,14 @@ public class BookingServiceTests
         Assert.True(result);
     }
     [Fact]
-    public void CreateBooking_GeneratesUniqueIds()
+    public async Task CreateBooking_GeneratesUniqueIds()
     {
-        var firstBooking = _bookingService.CreateBooking(
+        var firstBooking = await _bookingService.CreateBookingAsync(
             _room,
             new DateTime(2026, 9, 1, 10, 0, 0),
             new DateTime(2026, 9, 1, 12, 0, 0),
             new List<int>());
-        var secondBooking = _bookingService.CreateBooking(
+        var secondBooking = await _bookingService.CreateBookingAsync(
             _room,
             new DateTime(2026, 9, 1, 12, 0, 0),
             new DateTime(2026, 9, 1, 14, 0, 0),
@@ -220,71 +220,71 @@ public class BookingServiceTests
         Assert.NotEqual(firstBooking.Id, secondBooking.Id);
     }
     [Fact]
-    public void CreateBooking_Throws_WhenEndTimeIsNotLaterThanStartTime()
+    public async Task CreateBooking_Throws_WhenEndTimeIsNotLaterThanStartTime()
     {
         // Arrange
         var startTime = new DateTime(2026, 9, 1, 12, 0, 0);
         var endTime = new DateTime(2026, 9, 1, 10, 0, 0);
         // Act & Assert
-        Assert.Throws<ArgumentException>(() =>
-            _bookingService.CreateBooking(
+        await Assert.ThrowsAsync<ArgumentException>(async() =>
+            await _bookingService.CreateBookingAsync(
                 _room,
                 startTime,
                 endTime,
                 new List<int>()));
     }
     [Fact]
-    public void CreateBooking_Throws_WhenBookingSpansMultipleDays()
+    public async Task CreateBooking_Throws_WhenBookingSpansMultipleDays()
     {
         // Arrange
         var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
         var endTime = new DateTime(2026, 9, 2, 12, 0, 0);
         // Act & Assert
-        Assert.Throws<ArgumentException>(() =>
-            _bookingService.CreateBooking(
+        await Assert.ThrowsAsync<ArgumentException>(async() =>
+            await _bookingService.CreateBookingAsync(
                 _room,
                 startTime,
                 endTime,
                 new List<int>()));
     }
     [Fact]
-    public void CreateBooking_Throws_WhenStartTimeIsNotExactHour()
+    public async Task CreateBooking_Throws_WhenStartTimeIsNotExactHour()
     {
         // Arrange
         var startTime = new DateTime(2026, 9, 1, 10, 30, 0);
         var endTime = new DateTime(2026, 9, 1, 12, 0, 0);
         // Act & Assert
-        Assert.Throws<ArgumentException>(() =>
-            _bookingService.CreateBooking(
+        await Assert.ThrowsAsync<ArgumentException>(async() =>
+            await _bookingService.CreateBookingAsync(
                 _room,
                 startTime,
                 endTime,
                 new List<int>()));
     }
     [Fact]
-    public void CreateBooking_Throws_WhenEndTimeIsNotExactHour()
+    public async Task CreateBooking_Throws_WhenEndTimeIsNotExactHour()
     {
         // Arrange
         var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
         var endTime = new DateTime(2026, 9, 1, 12, 30, 0);
         // Act & Assert
-        Assert.Throws<ArgumentException>(() =>
-            _bookingService.CreateBooking(
+        await Assert.ThrowsAsync<ArgumentException>(async() =>
+            await _bookingService.CreateBookingAsync(
                 _room,
                 startTime,
                 endTime,
                 new List<int>()));
     }
     [Fact]
-    public void CreateBooking_Throws_WhenServicesNotFounded()
+    public async Task CreateBooking_Throws_WhenServicesNotFounded()
     {
         // Arrange
         var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
         var endTime = new DateTime(2026, 9, 1, 12, 0, 0);
         // Act & Assert
         var invalidServiceIds = new List<int> { 999 };
-        Assert.Throws<ArgumentException>(() =>
-            _bookingService.CreateBooking(
+        await Assert.ThrowsAsync<ArgumentException>(async() =>
+            await _bookingService.CreateBookingAsync(
                 _room,
                 startTime,
                 endTime,
