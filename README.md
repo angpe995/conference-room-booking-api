@@ -32,6 +32,7 @@ REST API for managing conference rooms, services, bookings, room availability, a
 | POST | `/api/rooms` | Create a new room |
 | PUT | `/api/rooms/{id}` | Update a room |
 | DELETE | `/api/rooms/{id}` | Delete a room |
+| DELETE | `/api/rooms/services/{id}` | Delete a room |
 | GET | `/api/rooms/{id}` | Get a room by ID |
 | GET | `/api/rooms/available` | Search for available rooms |
 
