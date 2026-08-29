@@ -19,17 +19,17 @@ public class BookingController : ControllerBase
         _roomService = roomService;
     }
     [HttpPost]
-    public ActionResult<Booking> CreateBooking([FromBody] CreateBookingRequest request)
+    public async Task<ActionResult<Booking>> CreateBooking([FromBody] CreateBookingRequest request)
     {
         // Find the requested room by ID
-        Room? room = _roomService.GetRoomById(request.RoomId);
+        Room? room =await _roomService.GetRoomByIdAsync(request.RoomId);
         if (room is null)
         {
             throw new NotFoundException(
                 $"Room with ID {request.RoomId} was not found.");
         }
         // Create and store the booking
-        Booking booking = _bookingService.CreateBooking(
+        Booking booking = await _bookingService.CreateBookingAsync(
             room,
             request.StartTime,
             request.EndTime,request.ServiceIds);

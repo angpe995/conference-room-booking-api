@@ -1,7 +1,7 @@
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Data;
 using ConferenceRoomBookingApi.Exceptions;
-using ConferenceRoomBookingApi.DTOs;
+using Microsoft.EntityFrameworkCore;
 namespace ConferenceRoomBookingApi.Services;
 
 public class BookingService
@@ -46,7 +46,7 @@ public class BookingService
             && endTime.TimeOfDay <= TimeSpan.FromHours(BookingEndHour);
     }
     // Creates and stores a new booking.
-    public Booking CreateBooking(
+    public async Task<Booking> CreateBookingAsync(
         Room room,
         DateTime startTime,
         DateTime endTime,
@@ -70,7 +70,7 @@ public class BookingService
                 "End time must be later than start time.");
         }
         //throws error when the room is alredy booked for the requested time 
-        if (!CheckAvailability(room.Id, startTime, endTime))
+        if (!await CheckAvailability(room.Id, startTime, endTime))
         {
             throw new ConflictException("Room is already booked.");
         }
@@ -93,14 +93,14 @@ public class BookingService
         };
 
         _context.Bookings.Add(booking);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return booking;
     }
     // Checks whether the room has no conflicting bookings.
-    public bool CheckAvailability(int roomId, DateTime StartTime,
+    public async Task<bool> CheckAvailability(int roomId, DateTime StartTime,
      DateTime EndTime)
     {
-        return !_context.Bookings.Any(booking =>
+        return !await _context.Bookings.AnyAsync(booking =>
             booking.RoomId == roomId &&
             booking.StartTime < EndTime &&
             StartTime < booking.EndTime);
