@@ -124,4 +124,82 @@ public class RoomSearchServiceTests
         // Assert
         Assert.Empty(result);
     }
+    [Fact]
+    public void SearchAvailableRooms_Throws_WhenEndTimeIsNotLaterThanStartTime()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 12, 0, 0);
+        var endTime = new DateTime(2026, 9, 1, 10, 0, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _roomSearchService.SearchAvailableRooms(
+                startTime,
+                endTime,
+                50));
+    }
+    [Fact]
+    public void SearchAvailableRooms_Throws_WhenBookingSpansMultipleDays()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
+        var endTime = new DateTime(2026, 9, 2, 12, 0, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _roomSearchService.SearchAvailableRooms(
+                startTime,
+                endTime,
+                50));
+    }
+    [Fact]
+    public void SearchAvailableRooms_Throws_WhenStartTimeIsNotExactHour()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 10, 30, 0);
+        var endTime = new DateTime(2026, 9, 1, 12, 0, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _roomSearchService.SearchAvailableRooms(
+                startTime,
+                endTime,
+                50));
+    }
+    [Fact]
+    public void SearchAvailableRooms_Throws_WhenEndTimeIsNotExactHour()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
+        var endTime = new DateTime(2026, 9, 1, 12, 30, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _roomSearchService.SearchAvailableRooms(
+                startTime,
+                endTime,
+                50));
+    }
+    [Fact]
+    public void SearchAvailableRooms_Throws_WhenCapacityIsZero()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
+        var endTime = new DateTime(2026, 9, 1, 12, 0, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _roomSearchService.SearchAvailableRooms(
+                startTime,
+                endTime,
+                0));
+    }
+    [Fact]
+    public void SearchAvailableRooms_Throws_WhenCapacityIsNegative()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
+        var endTime = new DateTime(2026, 9, 1, 12, 0, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _roomSearchService.SearchAvailableRooms(
+                startTime,
+                endTime,
+                -10));
+    }
 }

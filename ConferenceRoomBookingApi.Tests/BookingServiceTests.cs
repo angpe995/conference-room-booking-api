@@ -214,5 +214,61 @@ public class BookingServiceTests
             new List<int>());
         Assert.NotEqual(firstBooking.Id, secondBooking.Id);
     }
+    [Fact]
+    public void CreateBooking_Throws_WhenEndTimeIsNotLaterThanStartTime()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 12, 0, 0);
+        var endTime = new DateTime(2026, 9, 1, 10, 0, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _bookingService.CreateBooking(
+                _room,
+                startTime,
+                endTime,
+                new List<int>()));
+    }
+    [Fact]
+    public void CreateBooking_Throws_WhenBookingSpansMultipleDays()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
+        var endTime = new DateTime(2026, 9, 2, 12, 0, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _bookingService.CreateBooking(
+                _room,
+                startTime,
+                endTime,
+                new List<int>()));
+    }
+    [Fact]
+    public void CreateBooking_Throws_WhenStartTimeIsNotExactHour()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 10, 30, 0);
+        var endTime = new DateTime(2026, 9, 1, 12, 0, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _bookingService.CreateBooking(
+                _room,
+                startTime,
+                endTime,
+                new List<int>()));
+    }
+    [Fact]
+    public void CreateBooking_Throws_WhenEndTimeIsNotExactHour()
+    {
+        // Arrange
+        var startTime = new DateTime(2026, 9, 1, 10, 0, 0);
+        var endTime = new DateTime(2026, 9, 1, 12, 30, 0);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            _bookingService.CreateBooking(
+                _room,
+                startTime,
+                endTime,
+                new List<int>()));
+    }
 
 }
