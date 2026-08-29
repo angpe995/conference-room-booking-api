@@ -125,9 +125,13 @@ dotnet test
 
 ## Project Documentation
 
-The `docs` directory contains the class diagram describing the main entities, services, and their relationships.
+The project documentation is available in the docs folder:
 
-The diagram illustrates the relationships between:
+- [docs/Documentation.md](docs/Documentation.md) — short project documentation in Ukrainian.
+- [docs/Documentation.en.md](docs/Documentation.en.md) — short project documentation in English.
+- [docs](docs) — project documentation folder.
+
+The diagram in the docs directory illustrates the relationships between:
 
 - Rooms
 - Services
