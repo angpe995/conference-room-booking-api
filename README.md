@@ -1,12 +1,19 @@
 # conference-room-booking-api
 
-REST API for managing conference rooms, services, bookings,
-room availability, and reports.
+REST API for managing conference rooms, services, bookings, room availability, and reports.
 
 ## Technologies
-- C# .NET ASP.NET Core Entity Framework Core PostgreSQL xUnit Swagger
-  
+
+- C#
+- .NET
+- ASP.NET Core
+- Entity Framework Core
+- PostgreSQL
+- xUnit
+- Swagger
+
 ## Features
+
 - Create, update and delete rooms
 - Add and update room services
 - Search for available rooms
@@ -49,8 +56,7 @@ After starting the application, Swagger UI is available at:
 
 `/swagger`
 
-Swagger provides interactive documentation and allows API endpoints
-to be tested directly from the browser.
+Swagger provides interactive documentation and allows API endpoints to be tested directly from the browser.
 
 ## Database Setup
 
@@ -65,27 +71,41 @@ Configure the connection string locally:
   }
 }
 ```
+
 The actual database password should not be committed to the repository.
 
 ## Database Migrations
+
 The project uses Entity Framework Core migrations to manage the database schema.
+
 Install the Entity Framework Core CLI tool if it is not already installed:
+
 ```bash
 dotnet tool install --global dotnet-ef
 ```
+
+Restore project dependencies:
+
+```bash
+dotnet restore
+```
+
 Apply the existing migrations:
+
 ```bash
 dotnet ef database update --project ConferenceRoomBookingApi
 ```
 
 ## Running the Application
 
-Clone the repository and restore dependencies:
+Build the project:
+
 ```bash
-'dotnet restore'
+dotnet build
 ```
 
 Run the application:
+
 ```bash
 dotnet run --project ConferenceRoomBookingApi
 ```
@@ -94,19 +114,20 @@ The API can then be accessed through Swagger.
 
 ## Testing
 
-The project contains unit tests covering room management,
-booking logic, room availability, and reporting functionality.
+The project contains unit tests covering room management, booking logic, room availability, and reporting functionality.
 
 Run all tests with:
 
 ```bash
 dotnet test
 ```
+
 ## Project Documentation
-The `docs` directory contains the class diagram describing
-the main entities, services, and their relationships.
+
+The `docs` directory contains the class diagram describing the main entities, services, and their relationships.
 
 The diagram illustrates the relationships between:
+
 - Rooms
 - Services
 - Bookings
@@ -114,24 +135,18 @@ The diagram illustrates the relationships between:
 - AppDbContext
 
 ## Architecture
+
 The application follows a service-based architecture:
 
-**Controllers** handle HTTP requests and responses.
-
-**Services** contain business logic.
-
-**DTOs** define request and response models.
-
-**Models** represent domain entities.
-
-**AppDbContext** provides access to the PostgreSQL database.
-
-**GlobalExceptionHandler** provides centralized exception handling
+- **Controllers** handle HTTP requests and responses.
+- **Services** contain business logic.
+- **DTOs** define request and response models.
+- **Models** represent domain entities.
+- **AppDbContext** provides access to the PostgreSQL database.
+- **GlobalExceptionHandler** provides centralized exception handling.
 
 ## Error Handling
 
-The API uses centralized exception handling through
-`GlobalExceptionHandler`.
+The API uses centralized exception handling through `GlobalExceptionHandler`.
 
-Exceptions are converted into appropriate HTTP responses
-using the ASP.NET Core Problem Details mechanism.
+Exceptions are converted into appropriate HTTP responses using the ASP.NET Core Problem Details mechanism.
