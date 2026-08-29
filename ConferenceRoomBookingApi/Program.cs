@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 using ConferenceRoomBookingApi.Data;
 using ConferenceRoomBookingApi.Services;
 using ConferenceRoomBookingApi.Infrastructure;
@@ -6,11 +8,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DataStore>();
-builder.Services.AddSingleton<RoomService>();
-builder.Services.AddSingleton<BookingService>();
-builder.Services.AddSingleton<RoomSearchService>();
+builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<BookingService>();
+builder.Services.AddScoped<RoomSearchService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
 app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())

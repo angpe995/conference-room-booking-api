@@ -1,24 +1,23 @@
 using ConferenceRoomBookingApi.Models;
 using ConferenceRoomBookingApi.Data;
+using Microsoft.EntityFrameworkCore;
 namespace ConferenceRoomBookingApi.Services;
 
 public class RoomSearchService
 {
     private readonly BookingService _bookingService;
-    private readonly DataStore _dataStore;
-    public RoomSearchService(
-        BookingService bookingService,
-        DataStore dataStore)
+    private readonly AppDbContext _context;
+    public RoomSearchService(BookingService bookingService, AppDbContext context)
     {
+        _context = context;
         _bookingService = bookingService;
-        _dataStore = dataStore;
     }
     public List<Room> SearchAvailableRooms(
         DateTime startTime,
         DateTime endTime,
         int capacity)
     {
-         // Verify that the booking starts and ends exactly at the top of the hour.
+        // Verify that the booking starts and ends exactly at the top of the hour.
         if (startTime.Minute != 0 || endTime.Minute != 0)
         {
             throw new ArgumentException(
@@ -39,13 +38,14 @@ public class RoomSearchService
             throw new ArgumentException(
                 "Capacity must be greater than zero.");
         }
-        return _dataStore.Rooms
+        return _context.Rooms
+        .Include(room => room.Services)
             .Where(room =>
                 room.Capacity >= capacity &&
-                _bookingService.CheckAvailability(
-                    room.Id,
-                    startTime,
-                    endTime))
+                !_context.Bookings.Any(booking =>
+                    booking.RoomId == room.Id &&
+                    booking.StartTime < endTime &&
+                    startTime < booking.EndTime))
             .ToList();
     }
 }
