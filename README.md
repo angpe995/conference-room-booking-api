@@ -69,16 +69,13 @@ The actual database password should not be committed to the repository.
 
 ## Database Migrations
 The project uses Entity Framework Core migrations to manage the database schema.
-Apply pending migrations with:
-
+Install the Entity Framework Core CLI tool if it is not already installed:
 ```bash
-dotnet ef database update
+dotnet tool install --global dotnet-ef
 ```
-
-Create a new migration with:
-
+Apply the existing migrations:
 ```bash
-dotnet ef migrations add MigrationName`
+dotnet ef database update --project ConferenceRoomBookingApi
 ```
 
 ## Running the Application
