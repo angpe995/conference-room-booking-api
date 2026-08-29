@@ -11,6 +11,7 @@ builder.Services.AddSingleton<DataStore>();
 builder.Services.AddScoped<RoomService>();
 builder.Services.AddScoped<BookingService>();
 builder.Services.AddScoped<RoomSearchService>();
+builder.Services.AddScoped<ReportsService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<AppDbContext>(options =>
